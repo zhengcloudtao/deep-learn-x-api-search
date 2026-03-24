@@ -2,12 +2,16 @@
 """
 szpu-api-search — AES-CBC/PKCS7 加密请求工具
 用法:
-  python aes_request.py login  --key <api_key> --username <u> --password <p> --content <aes_key>
-  python aes_request.py score  --key <api_key> --username <u> --password <p> --content <aes_key>
+  python aes_request.py login  --key <api_key> --username <u> --password <p>
+  python aes_request.py score  --key <api_key> --username <u> --password <p>
+
+AES 密钥（content）由脚本每次随机生成：16 位数字与英文字母，无需传入。
 """
 
 import argparse
 import json
+import secrets
+import string
 import sys
 import urllib.parse
 import urllib.request
@@ -19,6 +23,12 @@ import base64
 
 BASE_URL = "https://api.cloudslow.com/szpu"
 IV = b"wn0ZfU4qmbhHE1lo"  # 固定 IV，16 字节
+_AES_KEY_ALPHABET = string.ascii_letters + string.digits
+
+
+def random_aes_key() -> str:
+    """16 位随机字符串（数字 + 英文），用作 AES-128 密钥与 content 参数。"""
+    return "".join(secrets.choice(_AES_KEY_ALPHABET) for _ in range(16))
 
 
 def aes_encrypt(plaintext: str, key: str) -> str:
@@ -51,8 +61,9 @@ def main():
     parser.add_argument("--key", required=True, help="API 密钥 (key_value)")
     parser.add_argument("--username", required=True, help="学号/账号")
     parser.add_argument("--password", required=True, help="密码")
-    parser.add_argument("--content", required=True, help="AES 密钥 (16字节, 即 content 参数)")
     args = parser.parse_args()
+
+    content = random_aes_key()
 
     payload = {
         "key": args.key,
@@ -66,7 +77,7 @@ def main():
     print(f"→ 调用 {endpoint} ...")
 
     try:
-        result = call_api(endpoint, payload, args.content)
+        result = call_api(endpoint, payload, content)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except Exception as e:
         print(f"[ERROR] {e}", file=sys.stderr)

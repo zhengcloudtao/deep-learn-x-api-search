@@ -14,13 +14,13 @@ https://api.cloudslow.com/szpu
 | 填充 | PKCS7 |
 | IV | `wn0ZfU4qmbhHE1lo`（固定，16字节） |
 | 密钥长度 | 128 bit（16字节） |
-| `content` 参数 | AES 密钥明文（调用方提供，如 `rsPlAWqcS3yOz9wP`） |
+| `content` 参数 | AES 密钥明文（16 字节 UTF-8，通常为 16 位随机数字+英文字符；脚本 `aes_request.py` 会自动生成） |
 | `data` 参数 | 明文 JSON 经 AES-CBC 加密后的 Base64 字符串，再做 URL 编码 |
 
 **加密流程：**
 1. 构造明文 JSON（见各接口说明）
 2. `AES.encrypt(plaintext, key, IV)` → Base64 → URL 编码 → `data` 参数
-3. `content` = AES 密钥明文（URL 编码后传入）
+3. `content` = AES 密钥明文（与加密所用密钥相同，URL 编码后传入）
 
 ---
 
@@ -85,4 +85,4 @@ GET https://api.cloudslow.com/szpu/api/searchScore?data=<密文>&content=<密钥
 ## 安全注意
 
 - 勿泄露真实 `key_value` 与账号密码
-- 文档中的示例密钥（`WS2HAsx5XkiopoU08Aa8nqZz72y9kiOe`、`rsPlAWqcS3yOz9wP`）仅为格式参考
+- 文档中的示例仅为格式参考；实际调用可用 16 位 `[0-9A-Za-z]` 随机串作为密钥
