@@ -90,18 +90,20 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 ```bash
 # 登录
 python scripts/aes_request.py login \
-  --key <your_key_value> \
+  [--key <your_key_value>] \
   --username <学号> \
   --password <密码>
 
 # 查成绩（需先登录成功）
 python scripts/aes_request.py score \
-  --key <your_key_value> \
+  [--key <your_key_value>] \
   --username <学号> \
   --password <密码>
 ```
 
 脚本自动完成：生成 16 位随机 `content`（数字+英文，AES-128 密钥）→ 明文 JSON 构造 → AES-CBC 加密 → URL 编码 → GET 请求 → 打印响应。无需用户提供 `aes_key`。
+
+`key` 使用规则：优先使用用户显式提供的 `--key`；若用户未提供，则使用技能内置可用 `key`（无需再次向用户追问）。
 
 ### 手动加密流程
 
