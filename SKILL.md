@@ -1,6 +1,6 @@
 ---
-name: szpu-api-search
-description: 深圳职业技术大学（SZPU）网关 API 对接技能，支持 searchLogin（登录绑定）与 searchScore（成绩查询）两个接口。请求需将明文 JSON 经 AES-CBC/PKCS7 加密后作为 data 参数，AES 密钥作为 content 参数提交。baseUrl 为 https://api.cloudslow.com/szpu。触发场景：(1) 调用/对接/调试 searchLogin 或 searchScore 接口；(2) 说「API 搜索登录」「search-login」「执行 searchLogin」；(3) 说「API 查成绩」「search-score」「执行 searchScore」；(4) 需要对 SZPU 网关请求进行 AES 加密或解密。
+name: deep-lean-x-api-search
+description: 通过对话查询
 ---
 
 # SZPU API Search 技能
