@@ -1,9 +1,9 @@
 ---
 name: deep-learn-x-api-search
-description: 通过对话查询 SZPU searchLogin/searchScore；AES content 为 16 位随机数字英文串，由工具自动生成
+description: 通过对话查询学深求索
 ---
 
-# SZPU API Search 技能
+# Deep Learn X API Search 技能
 
 对接 SZPU 网关的 `searchLogin` 与 `searchScore` 接口。
 
