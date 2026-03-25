@@ -2,8 +2,9 @@
 """
 szpu-api-search — AES-CBC/PKCS7 加密请求工具
 用法:
-  python aes_request.py login  --key <api_key> --username <u> --password <p>
-  python aes_request.py score  --key <api_key> --username <u> --password <p>
+  python aes_request.py login      --key <api_key> --username <u> --password <p>
+  python aes_request.py score      --key <api_key> --username <u> --password <p>
+  python aes_request.py timetable  --key <api_key> --username <u> --password <p> --term <学期>
 
 AES 密钥（content）由脚本每次随机生成：16 位数字与英文字母，无需传入。
 """
@@ -57,23 +58,40 @@ def call_api(endpoint: str, payload: dict, content: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="SZPU API 加密请求工具")
-    parser.add_argument("action", choices=["login", "score"], help="login=searchLogin, score=searchScore")
+    parser.add_argument(
+        "action",
+        choices=["login", "score", "timetable"],
+        help="login=searchLogin, score=searchScore, timetable=searchTimetable",
+    )
     parser.add_argument("--key", required=True, help="API 密钥 (key_value)")
     parser.add_argument("--username", required=True, help="学号/账号")
     parser.add_argument("--password", required=True, help="密码")
+    parser.add_argument("--term", help="学期（仅 timetable 必填）")
     args = parser.parse_args()
+
+    if args.action == "timetable" and not args.term:
+        parser.error("timetable 需要 --term <学期>")
 
     content = random_aes_key()
 
+    data_obj = {
+        "username": args.username,
+        "password": args.password,
+    }
+    if args.action == "timetable":
+        data_obj["term"] = args.term
+
     payload = {
         "key": args.key,
-        "data": {
-            "username": args.username,
-            "password": args.password,
-        }
+        "data": data_obj,
     }
 
-    endpoint = "/api/searchLogin" if args.action == "login" else "/api/searchScore"
+    if args.action == "login":
+        endpoint = "/api/searchLogin"
+    elif args.action == "score":
+        endpoint = "/api/searchScore"
+    else:
+        endpoint = "/api/searchTimetable"
     print(f"→ 调用 {endpoint} ...")
 
     try:

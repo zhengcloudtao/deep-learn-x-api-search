@@ -1,11 +1,11 @@
 ---
 name: deep-learn-x-api-search
-description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/searchScore 接口调用、加密参数生成与结果整理输出。
+description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/searchScore/searchTimetable 接口调用、加密参数生成与结果整理输出。
 ---
 
 # 🎓 Deep Learn X API Search 技能
 
-对接 SZPU 网关的 `searchLogin` 与 `searchScore` 接口。
+对接 SZPU 网关的 `searchLogin`、`searchScore` 与 `searchTimetable` 接口。
 
 ## 图标配置
 
@@ -24,7 +24,7 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 1. **结果标题行**：`🎓 学深求索结果`
 2. **请求信息块**：接口、账号、时间、状态
 3. **核心结果块**：成功/失败、关键信息、必要字段
-4. **明细表格块**：成绩明细或错误详情
+4. **明细表格块**：成绩明细、课表明细或错误详情
 5. **下一步建议块**：可执行命令或排查建议
 
 ### 平均绩点（加权平均分）计算规则
@@ -39,7 +39,7 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 🎓 学深求索结果
 
 ## 请求信息
-- 接口: <searchLogin|searchScore>
+- 接口: <searchLogin|searchScore|searchTimetable>
 - 账号: <username>
 - 时间: <YYYY-MM-DD HH:mm:ss>
 - 状态: <成功|失败>
@@ -56,6 +56,8 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 |------|------|------|------|
 | <subject> | <score> | <credit> | <term> |
 
+课表查询场景可将表头改为「课程 / 时间 / 教师 / 教室」等，与接口返回字段对齐。
+
 ## 下一步
 - <建议1>
 - <建议2>
@@ -67,7 +69,7 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 🎓 学深求索结果
 
 ## 请求信息
-- 接口: <searchLogin|searchScore>
+- 接口: <searchLogin|searchScore|searchTimetable>
 - 账号: <username>
 - 状态: 失败
 
@@ -77,7 +79,7 @@ description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/sea
 
 ## 排查建议
 1. 检查 `key` 是否正确且权限包含目标接口。
-2. 确认账号密码正确，并先执行 `searchLogin`。
+2. 确认账号密码正确，并先执行 `searchLogin`（`searchScore` / `searchTimetable` 均需已登录且账号密码与库中记录一致）。
 3. 30 秒后重试，避免触发限流。
 ```
 
@@ -99,6 +101,13 @@ python scripts/aes_request.py score \
   [--key <your_key_value>] \
   --username <学号> \
   --password <密码>
+
+# 查课表（需先登录成功；需指定学期 term，格式与教务一致）
+python scripts/aes_request.py timetable \
+  [--key <your_key_value>] \
+  --username <学号> \
+  --password <密码> \
+  --term <学期>
 ```
 
 脚本自动完成：生成 16 位随机 `content`（数字+英文，AES-128 密钥）→ 明文 JSON 构造 → AES-CBC 加密 → URL 编码 → GET 请求 → 打印响应。无需用户提供 `aes_key`。
@@ -118,8 +127,9 @@ python scripts/aes_request.py score \
 |------|------|---------|
 | searchLogin | `/api/searchLogin` | `search-login` |
 | searchScore | `/api/searchScore` | `search-score` |
+| searchTimetable | `/api/searchTimetable` | `search-timetable` |
 
-> searchScore 需先 searchLogin 成功，且使用同一组账号密码。
+> `searchScore` / `searchTimetable` 均需先 `searchLogin` 成功，且使用同一组账号密码；`searchTimetable` 额外在明文 `data` 中传入 `term`（学期）。
 
 ## 输出示例（成绩查询）
 

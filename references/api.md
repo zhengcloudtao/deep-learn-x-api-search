@@ -77,6 +77,36 @@ GET https://api.cloudslow.com/szpu/api/searchScore?data=<密文>&content=<密钥
 
 ---
 
+## /api/searchTimetable
+
+**路径：** `https://api.cloudslow.com/szpu/api/searchTimetable`  
+**传参：** GET 查询参数 或 POST 表单（参数需 URL 编码）  
+**权限：** `search-timetable`  
+**前置：** 须先调用 `searchLogin` 成功，且使用同一组 username/password；服务端会校验 `api_login_key_username` 中是否存在该 key 与账号密码组合。
+
+### 明文 JSON 结构
+
+`data` 内除账号密码外，须包含学期 `term`（格式与教务/云函数约定一致，例如学年学期编码）。
+
+```json
+{
+  "key": "<your_key_value>",
+  "data": {
+    "username": "学号",
+    "password": "密码",
+    "term": "<学期>"
+  }
+}
+```
+
+### 示例请求
+
+```
+GET https://api.cloudslow.com/szpu/api/searchTimetable?data=<密文>&content=<密钥>
+```
+
+---
+
 ## ApiKey 限流说明
 
 - 小时 / 天 / 月 / 年 / 总次数均可配置，值为 0 表示该维度不限
