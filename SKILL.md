@@ -1,11 +1,11 @@
 ---
-name: deep-learn-x
-description: 通过对话查询学深求索信息。
+name: deep-learn-x (Beta)
+description: 查询学深求索信息。
 ---
 
 # 🎓 Deep Learn X API Search 技能
 
-对接 SZPU 网关的 `searchLogin`、`searchScore` 与 `searchTimetable` 接口。
+对接封装好的 `searchLogin`、`searchScore` 与 `searchTimetable` 接口。
 
 ## 图标配置
 
