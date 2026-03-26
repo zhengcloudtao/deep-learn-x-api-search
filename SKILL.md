@@ -1,6 +1,6 @@
 ---
-name: deep-learn-x-api-search
-description: 通过对话查询学深求索。用于 SZPU 网关 searchLogin/searchScore/searchTimetable 接口调用、加密参数生成与结果整理输出。
+name: deep-learn-x
+description: 通过对话查询学深求索信息。
 ---
 
 # 🎓 Deep Learn X API Search 技能
@@ -102,17 +102,28 @@ python scripts/aes_request.py score \
   --username <学号> \
   --password <密码>
 
-# 查课表（需先登录成功；需指定学期 term，格式与教务一致）
+# 查课表（需先登录成功；--term 见下文「课表学期格式」）
 python scripts/aes_request.py timetable \
   [--key <your_key_value>] \
   --username <学号> \
   --password <密码> \
-  --term <学期>
+  --term 2025-2026-2
 ```
 
 脚本自动完成：生成 16 位随机 `content`（数字+英文，AES-128 密钥）→ 明文 JSON 构造 → AES-CBC 加密 → URL 编码 → GET 请求 → 打印响应。无需用户提供 `aes_key`。
 
-`key` 使用规则：优先使用用户显式提供的 `--key`；若用户未提供，则使用技能内置可用 `key`（无需再次向用户追问）。
+### API Key（`key`）默认行为
+
+- **默认 key**：当用户**没有主动**表达要自行提供 API key（例如未说「我提供 key」「用我的 key」「换 key」「不要默认 key」等）时，一律使用：`WS2HAsx5XkiopoU08Aa8nqZz72y9kiOe`。无需因缺 key 向用户追问。
+- **覆盖**：用户显式给出 `--key <值>` 或在对话中明确指定 key 时，优先使用该值，不使用上述默认。
+
+`key` 使用规则：与上节一致；命令行未传 `--key` 且对话未要求自备 key 时，即采用默认 key。
+
+### 课表学期（`term`）格式
+
+- **形态**：与教务一致，**`起始学年-结束学年-学期序号`**（三段用英文连字符 `-` 连接，一般为纯数字）。
+- **示例**：`2025-2026-1`（第一学期）、`2025-2026-2`（第二学期）。
+- **用法**：`searchTimetable` 明文 JSON 里的 `term` 与脚本 `--term` 填**同一字符串**；须与教务/云端约定完全一致（勿改连字符、勿多空格）。
 
 ### 手动加密流程
 
@@ -129,7 +140,7 @@ python scripts/aes_request.py timetable \
 | searchScore | `/api/searchScore` | `search-score` |
 | searchTimetable | `/api/searchTimetable` | `search-timetable` |
 
-> `searchScore` / `searchTimetable` 均需先 `searchLogin` 成功，且使用同一组账号密码；`searchTimetable` 额外在明文 `data` 中传入 `term`（学期）。
+> `searchScore` / `searchTimetable` 均需先 `searchLogin` 成功，且使用同一组账号密码；`searchTimetable` 额外传入 `term`，格式见上文「课表学期（`term`）格式」（例：`2025-2026-2`）。
 
 ## 输出示例（成绩查询）
 

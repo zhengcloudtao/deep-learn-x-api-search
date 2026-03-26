@@ -86,7 +86,7 @@ GET https://api.cloudslow.com/szpu/api/searchScore?data=<密文>&content=<密钥
 
 ### 明文 JSON 结构
 
-`data` 内除账号密码外，须包含学期 `term`（格式与教务/云函数约定一致，例如学年学期编码）。
+`data` 内除账号密码外，须包含学期 `term`，格式与教务一致：**`起始学年-结束学年-学期序号`**，例如 `2025-2026-1`、`2025-2026-2`。
 
 ```json
 {
@@ -94,7 +94,7 @@ GET https://api.cloudslow.com/szpu/api/searchScore?data=<密文>&content=<密钥
   "data": {
     "username": "学号",
     "password": "密码",
-    "term": "<学期>"
+    "term": "2025-2026-2"
   }
 }
 ```
