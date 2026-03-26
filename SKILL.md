@@ -1,6 +1,7 @@
 ---
 name: deep-learn-x (Beta)
 description: 查询学深求索信息。
+icon: icon.png
 ---
 
 # 🎓 Deep Learn X API Search 技能
